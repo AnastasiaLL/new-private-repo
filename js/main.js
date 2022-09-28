@@ -7,6 +7,16 @@ const domObj = {
   avatarUser: document.querySelectorAll(".img-medium"),
   titleUser: document.querySelectorAll(".peoples__title")
 };
+const peoplePopup = {
+  mainPop: document.querySelector(".peoples-popup"),
+  imagesLarge: document.querySelector(".img-large"),
+  title: document.querySelector(".popup-title"),
+  street: document.querySelector(".people-street"),
+  city: document.querySelector(".people-city"),
+  state: document.querySelector(".people-state"),
+  email: document.querySelector(".people-email"),
+  phone: document.querySelector(".people-telephone")
+};
 
 function load(callback, api) {
   fetch(corsApi + api)
@@ -68,7 +78,6 @@ function generalSort (mode){
   });
 }
 
-
 function listenToTheEvent() {
   document.querySelector(".close").addEventListener("click", toClose);
   document.getElementById("sortAlphabet").addEventListener("click", alphabetSort);
@@ -84,31 +93,18 @@ function listenToTheEvent() {
 }
 
 function renderPopup(obj) {
-  const peoplePopup = {
-    mainPop: document.querySelector(".peoples-popup"),
-    popUpContent: document.querySelector(".peoples-popup__content"),
-    imagesLarge: document.querySelector(".img-large"),
-    title: document.querySelector(".popup-title"),
-    street: document.querySelector(".people-street"),
-    city: document.querySelector(".people-city"),
-    state: document.querySelector(".people-state"),
-    email: document.querySelector(".people-email"),
-    phone: document.querySelector(".people-telephone")
-  };
+  const person = obj[event.currentTarget.dataset.index - 1]
 
-  for (let i = 0; i < obj.length; i++) {
-    if (event.target.dataset.index == i + 1) {
-      peoplePopup.title.innerHTML = `Full name: ${obj[i].name.title} . ${obj[i].name.first} ${obj[i].name.last}`;
-      peoplePopup.city.innerHTML = `City: ${obj[i].location.city}`;
-      peoplePopup.state.innerHTML = `State: ${obj[i].location.state}`;
-      peoplePopup.email.innerHTML = `Mail: ${obj[i].email}`;
-      peoplePopup.street.innerHTML = `street: ${obj[i].location.street}`;
-      peoplePopup.phone.innerHTML = obj[i].phone;
-      peoplePopup.imagesLarge.src = obj[i].picture.large;
-    }
-  }
+  peoplePopup.title.innerHTML = `Full name: ${person.name.title}. ${person.name.first} ${person.name.last}`;
+  peoplePopup.city.innerHTML = `City: ${person.location.city}`;
+  peoplePopup.state.innerHTML = `State: ${person.location.state}`;
+  peoplePopup.email.innerHTML = `Mail: ${person.email}`;
+  peoplePopup.street.innerHTML = `Street: ${person.location.street}`;
+  peoplePopup.phone.innerHTML = `Phone: ${person.phone}`;
+  peoplePopup.imagesLarge.src = person.picture.large;
 
   peoplePopup.mainPop.setAttribute("style", "display:block");
 }
+
 listenToTheEvent();
 load(transferData, users);
