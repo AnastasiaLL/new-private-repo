@@ -1,5 +1,6 @@
 let users = "http://api.randomuser.me/1.0/?results=50&nat=gb,us&inc=gender,name,location,email,phone,picture";
-let cors_Api = "https://cors-anywhere.herokuapp.com/";
+let corsApi = "https://cors-anywhere.herokuapp.com/";
+let objData;
 const domObj = {
   popUp: document.querySelectorAll(".peoples-popup"),
   btnSpaceClick: document.querySelectorAll(".open-information"),
@@ -8,12 +9,12 @@ const domObj = {
 };
 
 function load(callback, api) {
-  fetch(cors_Api + api)
-    .then(function(response) {
+  fetch(corsApi + api)
+    .then(function (response) {
       console.log(response);
       return Promise.all([response.status, response.json()]);
     })
-    .then(function(result) {
+    .then(function (result) {
       if (result[0] != 200) {
         console.log(`Error: ${result[0]}`);
       } else {
@@ -21,16 +22,16 @@ function load(callback, api) {
         console.log(result[1]);
       }
     })
-    .catch(function(error) {
+    .catch(function (error) {
       alert(`Error: ${error}`);
     });
 }
 
-let objData;
 function transform(data) {
   objData = data.results;
   render(objData);
 }
+
 function render(objData) {
   for (let i = 0; i < objData.length; i++) {
     let userObj = {
@@ -50,39 +51,45 @@ function render(objData) {
     domObj.titleUser[i].textContent = `${userObj.title}. ${userObj.first} ${userObj.last}`;
   }
 }
+
 function toClose() {
   document.querySelector(".peoples-popup").style.display = "none";
 }
-function sortAlphavite() {
-  objData.sort(function(a, b) {
-    if (a.name.last > b.name.last) {
+
+function alphabetSort() {
+  objData.sort(function (firstItem, secondItem) {
+    if (firstItem.name.last > secondItem.name.last) {
       return 1;
     }
-    if (a.name.last < b.name.last) return -1;
-    if (a.name.last == b.name.last) return 0;
+    if (firstItem.name.last < secondItem.name.last) return -1;
+    if (firstItem.name.last == secondItem.name.last) return 0;
   });
   render(objData);
 }
+
 function backSort() {
-  objData.sort(function(a, b) {
-    if (a.name.last > b.name.last) {
+  objData.sort(function (firstItem, secondItem) {
+    if (firstItem.name.last > secondItem.name.last) {
       return -1;
     }
-    if (a.name.last < b.name.last) return 1;
-    if (a.name.last == b.name.last) return 0;
+    if (firstItem.name.last < secondItem.name.last) return 1;
+    if (firstItem.name.last == secondItem.name.last) return 0;
   });
   render(objData);
 }
 
 function listenToTheEvent() {
   document.querySelector(".close").addEventListener("click", toClose);
-  document
-    .getElementById("sortAlphavite")
-    .addEventListener("click", sortAlphavite);
+  document.getElementById("sortAlphabet").addEventListener("click", alphabetSort);
   document.getElementById("backSort").addEventListener("click", backSort);
-  let elements = document.querySelectorAll(".peoples");
-  for (let i = 0; i < elements.length; i++) {
-    elements[i].onclick = function() {
+
+  let peoples = document.querySelectorAll(".peoples");
+
+  for (let i = 0; i < peoples.length; i++) {
+    // peoples[i].addEventListener( "click", ()=>{
+    //   renderPopup(objData);
+    // })
+    peoples[i].onclick = function () {
       renderPopup(objData);
     };
   }
@@ -91,7 +98,7 @@ function listenToTheEvent() {
 function renderPopup(obj) {
   const peoplePopup = {
     mainPop: document.querySelector(".peoples-popup"),
-    popUpContent: document.querySelector(".ppeoples-popup__content"),
+    popUpContent: document.querySelector(".peoples-popup__content"),
     imagesLarge: document.querySelector(".img-large"),
     title: document.querySelector(".popup-title"),
     street: document.querySelector(".people-street"),
