@@ -57,26 +57,25 @@ function toClose() {
 }
 
 function alphabetSort() {
-  objData.sort(function (firstItem, secondItem) {
-    if (firstItem.name.last > secondItem.name.last) {
-      return 1;
-    }
-    if (firstItem.name.last < secondItem.name.last) return -1;
-    if (firstItem.name.last == secondItem.name.last) return 0;
-  });
+  let mode = 1;
+  generalSort (mode);
   render(objData);
 }
 
 function backSort() {
-  objData.sort(function (firstItem, secondItem) {
-    if (firstItem.name.last > secondItem.name.last) {
-      return -1;
-    }
-    if (firstItem.name.last < secondItem.name.last) return 1;
-    if (firstItem.name.last == secondItem.name.last) return 0;
-  });
+  let mode = -1;
+  generalSort (mode);
   render(objData);
 }
+
+function generalSort (mode){
+  objData.sort(function (firstItem, secondItem) {
+    if (firstItem.name.last > secondItem.name.last) return mode;
+    if (firstItem.name.last < secondItem.name.last) return -mode;
+    if (firstItem.name.last == secondItem.name.last) return 0;
+  });
+}
+
 
 function listenToTheEvent() {
   document.querySelector(".close").addEventListener("click", toClose);
@@ -86,12 +85,9 @@ function listenToTheEvent() {
   let peoples = document.querySelectorAll(".peoples");
 
   for (let i = 0; i < peoples.length; i++) {
-    // peoples[i].addEventListener( "click", ()=>{
-    //   renderPopup(objData);
-    // })
-    peoples[i].onclick = function () {
+    peoples[i].addEventListener( "click", ()=>{
       renderPopup(objData);
-    };
+    })
   }
 }
 
