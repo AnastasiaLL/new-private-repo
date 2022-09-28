@@ -75,13 +75,12 @@ function generalSort (mode){
 function listenToTheEvent() {
   document.getElementById("sortAlphabet").addEventListener("click", alphabetSort);
   document.getElementById("backSort").addEventListener("click", backSort);
+
   document.querySelector(".close").addEventListener("click", ()=> {
     togglePopup(false)
   });
-
-
+  
   let peoples = document.querySelectorAll(".peoples");
-
   for (let i = 0; i < peoples.length; i++) {
     peoples[i].addEventListener( "click", ()=>{
       renderPopup(objData);
