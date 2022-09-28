@@ -1,5 +1,5 @@
-var users = "http://api.randomuser.me/1.0/?results=50&nat=gb,us&inc=gender,name,location,email,phone,picture";
-var cors_Api = "https://cors-anywhere.herokuapp.com/";
+let users = "http://api.randomuser.me/1.0/?results=50&nat=gb,us&inc=gender,name,location,email,phone,picture";
+let cors_Api = "https://cors-anywhere.herokuapp.com/";
 const domObj = {
   popUp: document.querySelectorAll(".peoples-popup"),
   btnSpaceClick: document.querySelectorAll(".open-information"),
@@ -15,14 +15,14 @@ function load(callback, api) {
     })
     .then(function(result) {
       if (result[0] != 200) {
-        console.log("Ошибка");
+        console.log(`Error: ${result[0]}`);
       } else {
         callback(result[1]);
         console.log(result[1]);
       }
     })
     .catch(function(error) {
-      alert("Ошибка");
+      alert(`Error: ${error}`);
     });
 }
 
@@ -80,8 +80,8 @@ function listenToTheEvent() {
     .getElementById("sortAlphavite")
     .addEventListener("click", sortAlphavite);
   document.getElementById("backSort").addEventListener("click", backSort);
-  var elements = document.querySelectorAll(".peoples");
-  for (var i = 0; i < elements.length; i++) {
+  let elements = document.querySelectorAll(".peoples");
+  for (let i = 0; i < elements.length; i++) {
     elements[i].onclick = function() {
       renderPopup(objData);
     };
