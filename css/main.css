@@ -15,16 +15,16 @@
     
     
 }
-.header-item{
+.header__item{
    
     
     justify-content: center;
     height: 60px;
 }
-.header-item input{
+.header__item input{
     
 }
-.header-item input{
+.header__item input{
     display: flex;
     
     margin: 5px;
@@ -36,7 +36,7 @@
     color: aqua;
     
 }
-.peoples-title{
+.peoples__title{
     font-size: 20px;
 }
 main{
@@ -65,7 +65,7 @@ footer{
     overflow: auto;
     background-color: rgba(0,0,0,0.9)
 }
-.peoples-popup-content{
+.peoples-popup__content{
     background-color: #fefefe;
     margin: 15% auto;
     padding: 20px;

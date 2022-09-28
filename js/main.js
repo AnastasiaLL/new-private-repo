@@ -4,7 +4,7 @@ const domObj = {
   popUp: document.querySelectorAll(".peoples-popup"),
   btnSpaceClick: document.querySelectorAll(".open-information"),
   avatarUser: document.querySelectorAll(".img-medium"),
-  titleUser: document.querySelectorAll(".peoples-title")
+  titleUser: document.querySelectorAll(".peoples__title")
 };
 
 function load(callback, api) {
@@ -91,7 +91,7 @@ function listenToTheEvent() {
 function renderPopup(obj) {
   const peoplePopup = {
     mainPop: document.querySelector(".peoples-popup"),
-    popUpContent: document.querySelector(".peoples-popup-content"),
+    popUpContent: document.querySelector(".ppeoples-popup__content"),
     imagesLarge: document.querySelector(".img-large"),
     title: document.querySelector(".popup-title"),
     street: document.querySelector(".people-street"),
