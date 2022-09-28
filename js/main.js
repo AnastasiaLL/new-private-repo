@@ -1,9 +1,7 @@
 let users = "http://api.randomuser.me/1.0/?results=50&nat=gb,us&inc=gender,name,location,email,phone,picture";
 let corsApi = "https://cors-anywhere.herokuapp.com/";
 let objData;
-const domObj = {
-  popUp: document.querySelectorAll(".peoples-popup"),
-  btnSpaceClick: document.querySelectorAll(".open-information"),
+const peopleContent = {
   avatarUser: document.querySelectorAll(".img-medium"),
   titleUser: document.querySelectorAll(".peoples__title")
 };
@@ -49,13 +47,9 @@ function render(objData) {
     let userFirstName = objData[i]["name"]["first"];
     let userLastName = objData[i]["name"]["last"];
 
-    domObj.avatarUser[i].src = userAvatar;
-    domObj.titleUser[i].textContent = `${userTitle}. ${userFirstName} ${userLastName}`;
+    peopleContent.avatarUser[i].src = userAvatar;
+    peopleContent.titleUser[i].textContent = `${userTitle}. ${userFirstName} ${userLastName}`;
   }
-}
-
-function toClose() {
-  document.querySelector(".peoples-popup").style.display = "none";
 }
 
 function alphabetSort() {
@@ -79,9 +73,12 @@ function generalSort (mode){
 }
 
 function listenToTheEvent() {
-  document.querySelector(".close").addEventListener("click", toClose);
   document.getElementById("sortAlphabet").addEventListener("click", alphabetSort);
   document.getElementById("backSort").addEventListener("click", backSort);
+  document.querySelector(".close").addEventListener("click", ()=> {
+    togglePopup(false)
+  });
+
 
   let peoples = document.querySelectorAll(".peoples");
 
@@ -103,8 +100,19 @@ function renderPopup(obj) {
   peoplePopup.phone.innerHTML = `Phone: ${person.phone}`;
   peoplePopup.imagesLarge.src = person.picture.large;
 
-  peoplePopup.mainPop.setAttribute("style", "display:block");
+  togglePopup(true)
 }
+
+function togglePopup(flag) {
+  let displayStyle;
+  if (flag){
+    displayStyle = "display:block"
+  }else {
+    displayStyle = "display:none"
+  }
+  peoplePopup.mainPop.setAttribute("style", displayStyle);
+}
+
 
 listenToTheEvent();
 load(transferData, users);
