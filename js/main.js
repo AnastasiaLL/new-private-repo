@@ -34,21 +34,13 @@ function transform(data) {
 
 function render(objData) {
   for (let i = 0; i < objData.length; i++) {
-    let userObj = {
-      gender: objData[i]["gender"],
-      avatar: objData[i]["picture"]["medium"],
-      avatarLarge: objData[i]["picture"]["large"],
-      title: objData[i]["name"]["title"],
-      first: objData[i]["name"]["first"],
-      last: objData[i]["name"]["last"],
-      street: objData[i]["location"]["street"],
-      city: objData[i]["location"]["city"],
-      state: objData[i]["location"]["state"],
-      email: objData[i]["email"],
-      phone: objData[i]["phone"]
-    };
-    domObj.avatarUser[i].src = userObj.avatar;
-    domObj.titleUser[i].textContent = `${userObj.title}. ${userObj.first} ${userObj.last}`;
+    let userAvatar = objData[i]["picture"]["medium"];
+    let userTitle = objData[i]["name"]["title"]; 
+    let userFirstName = objData[i]["name"]["first"];
+    let userLastName = objData[i]["name"]["last"];
+    
+    domObj.avatarUser[i].src = userAvatar;
+    domObj.titleUser[i].textContent = `${userTitle}. ${userFirstName} ${userLastName}`;
   }
 }
 
