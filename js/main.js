@@ -27,7 +27,7 @@ function load(callback, api) {
     });
 }
 
-function transform(data) {
+function transferData(data) {
   objData = data.results;
   render(objData);
 }
@@ -38,7 +38,7 @@ function render(objData) {
     let userTitle = objData[i]["name"]["title"]; 
     let userFirstName = objData[i]["name"]["first"];
     let userLastName = objData[i]["name"]["last"];
-    
+
     domObj.avatarUser[i].src = userAvatar;
     domObj.titleUser[i].textContent = `${userTitle}. ${userFirstName} ${userLastName}`;
   }
@@ -111,4 +111,4 @@ function renderPopup(obj) {
   peoplePopup.mainPop.setAttribute("style", "display:block");
 }
 listenToTheEvent();
-load(transform, users);
+load(transferData, users);
