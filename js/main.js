@@ -5,12 +5,12 @@ const peopleContent = {};
 const peoplePopup = {
   mainPop: document.querySelector('.peoples-popup'),
   imagesLarge: document.querySelector('.img-large'),
-  title: document.querySelector('.popup-title'),
-  street: document.querySelector('.people-street'),
-  city: document.querySelector('.people-city'),
-  state: document.querySelector('.people-state'),
-  email: document.querySelector('.people-email'),
-  phone: document.querySelector('.people-telephone'),
+  title: document.querySelector('.peoples-popup__title'),
+  street: document.querySelector('.peoples-popup__street'),
+  city: document.querySelector('.peoples-popup__city'),
+  state: document.querySelector('.peoples-popup__state'),
+  email: document.querySelector('.peoples-popup__email'),
+  phone: document.querySelector('.peoples-popup__telephone'),
 };
 
 
@@ -47,18 +47,20 @@ function viewDataOnPage(data) {
 
 function createDataContainers(n) {
   const main = document.querySelector('main');
-  const loadingWindow = document.querySelector('.loading-window');
-  loadingWindow.style.display = 'none';
+  document.querySelector('.loading-window').style.display = 'none';
   for (let i = 0; i < n; i += 1) {
     const contentWrapper = document.createElement('div');
-    contentWrapper.classList.add('peoples');
-    contentWrapper.dataset.index = i;
     const peopeImage = document.createElement('img');
-    peopeImage.classList.add('img-medium');
-    peopeImage.alt = 'avatar';
     const peopeTitle = document.createElement('span');
+
+    contentWrapper.classList.add('peoples');
+    peopeImage.classList.add('img-medium');
     peopeTitle.classList.add('peoples__title');
+
+    contentWrapper.dataset.index = i;
+    peopeImage.alt = 'avatar';
     peopeTitle.textContent = 'Title';
+
     contentWrapper.append(peopeImage, peopeTitle);
     main.append(contentWrapper);
   }
