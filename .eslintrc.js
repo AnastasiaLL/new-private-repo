@@ -9,7 +9,7 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
-    'no-use-before-define': 'off',
+    'no-use-before-define': 'off', //according to row 24 Code quality.xls
     'no-console': 'off',
     'no-alert': 'off',
   },

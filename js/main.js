@@ -1,10 +1,7 @@
 const users = 'http://api.randomuser.me/1.0/?results=50&nat=gb,us&inc=gender,name,location,email,phone,picture';
 const corsApi = 'https://cors-anywhere.herokuapp.com/';
 let objData;
-const peopleContent = {
-  avatarUser: document.querySelectorAll('.img-medium'),
-  titleUser: document.querySelectorAll('.peoples__title'),
-};
+const peopleContent = {};
 const peoplePopup = {
   mainPop: document.querySelector('.peoples-popup'),
   imagesLarge: document.querySelector('.img-large'),
@@ -15,6 +12,10 @@ const peoplePopup = {
   email: document.querySelector('.people-email'),
   phone: document.querySelector('.people-telephone'),
 };
+
+
+load(viewDataOnPage, users);
+
 
 function load(callback, api) {
   fetch(corsApi + api)
@@ -37,21 +38,32 @@ function load(callback, api) {
     });
 }
 
-function transferData(data) {
+function viewDataOnPage(data) {
   objData = data.results;
+  createDataContainers(objData.length);
+  listenToTheEvent();
   render(objData);
 }
 
-function render(renderedObject) {
-  for (let i = 0; i < renderedObject.length; i += 1) {
-    const userAvatar = renderedObject[i].picture.medium;
-    const userTitle = renderedObject[i].name.title;
-    const userFirstName = renderedObject[i].name.first;
-    const userLastName = renderedObject[i].name.last;
-
-    peopleContent.avatarUser[i].src = userAvatar;
-    peopleContent.titleUser[i].textContent = `${userTitle}. ${userFirstName} ${userLastName}`;
+function createDataContainers(n) {
+  const main = document.querySelector('main');
+  const loadingWindow = document.querySelector('.loading-window');
+  loadingWindow.style.display = 'none';
+  for (let i = 0; i < n; i += 1) {
+    const contentWrapper = document.createElement('div');
+    contentWrapper.classList.add('peoples');
+    contentWrapper.dataset.index = i;
+    const peopeImage = document.createElement('img');
+    peopeImage.classList.add('img-medium');
+    peopeImage.alt = 'avatar';
+    const peopeTitle = document.createElement('span');
+    peopeTitle.classList.add('peoples__title');
+    peopeTitle.textContent = 'Title';
+    contentWrapper.append(peopeImage, peopeTitle);
+    main.append(contentWrapper);
   }
+  peopleContent.avatarUser = document.querySelectorAll('.img-medium');
+  peopleContent.titleUser = document.querySelectorAll('.peoples__title');
 }
 
 function listenToTheEvent() {
@@ -72,6 +84,18 @@ function listenToTheEvent() {
   }
 }
 
+function render(renderedObject) {
+  for (let i = 0; i < renderedObject.length; i += 1) {
+    const userAvatar = renderedObject[i].picture.medium;
+    const userTitle = renderedObject[i].name.title;
+    const userFirstName = renderedObject[i].name.first;
+    const userLastName = renderedObject[i].name.last;
+
+    peopleContent.avatarUser[i].src = userAvatar;
+    peopleContent.titleUser[i].textContent = `${userTitle}. ${userFirstName} ${userLastName}`;
+  }
+}
+
 function dataSort(mode) {
   objData.sort((firstItem, secondItem) => {
     if (firstItem.name.last > secondItem.name.last) return mode;
@@ -79,20 +103,6 @@ function dataSort(mode) {
     return 0;
   });
   render(objData);
-}
-
-function renderPopup() {
-  const person = objData[window.event.currentTarget.dataset.index - 1];
-
-  peoplePopup.title.innerHTML = `Full name: ${person.name.title}. ${person.name.first} ${person.name.last}`;
-  peoplePopup.city.innerHTML = `City: ${person.location.city}`;
-  peoplePopup.state.innerHTML = `State: ${person.location.state}`;
-  peoplePopup.email.innerHTML = `Mail: ${person.email}`;
-  peoplePopup.street.innerHTML = `Street: ${person.location.street}`;
-  peoplePopup.phone.innerHTML = `Phone: ${person.phone}`;
-  peoplePopup.imagesLarge.src = person.picture.large;
-
-  togglePopup(true);
 }
 
 function togglePopup(flag) {
@@ -105,5 +115,16 @@ function togglePopup(flag) {
   peoplePopup.mainPop.setAttribute('style', displayStyle);
 }
 
-listenToTheEvent();
-load(transferData, users);
+function renderPopup() {
+  const person = objData[window.event.currentTarget.dataset.index];
+
+  peoplePopup.title.innerHTML = `Full name: ${person.name.title}. ${person.name.first} ${person.name.last}`;
+  peoplePopup.city.innerHTML = `City: ${person.location.city}`;
+  peoplePopup.state.innerHTML = `State: ${person.location.state}`;
+  peoplePopup.email.innerHTML = `Mail: ${person.email}`;
+  peoplePopup.street.innerHTML = `Street: ${person.location.street}`;
+  peoplePopup.phone.innerHTML = `Phone: ${person.phone}`;
+  peoplePopup.imagesLarge.src = person.picture.large;
+
+  togglePopup(true);
+}

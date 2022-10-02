@@ -29,6 +29,17 @@ main{
     flex-direction: column;
     justify-content: center;
 }
+.loading-window{
+    background-color: rgba(42, 66, 97,0.8);
+    color: white;
+    font-size: 20px;
+    height: calc(100vh - 120px);
+    display: flex;
+    justify-content: center
+}
+.loading-window p{
+    text-align: center;
+}
 footer{
     display: flex;
     flex: 0 0 auto;
