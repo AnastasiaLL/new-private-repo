@@ -77,6 +77,59 @@ let plan = ["############################",
 
 // animals
 
+class World {
+    constructor (){
+        this.animals = [];
+    }
+    // createAnimals(population){
+    //     for (let i = 0; i <= population; i+=1){
+    //         let newAnimal = new Animal;
+    //         this.animals.push(newAnimal);
+    //     }
+    // }
+    createAnimals(animalClass, population){
+        for (let i = 0; i < population; i+=1){
+            let newAnimal = new animalClass;
+            this.animals.push(newAnimal);
+        }
+    }
+    renderAnimals(){
+        this.animals.forEach( animal => {
+            animal.born();
+            this._drowUnit(animal, animal.icon)
+        })
+    }
+    _drowUnit (unit, icon){
+        plan[unit.y] = plan[unit.y].slice(0, unit.x) + `${icon}` + plan[unit.y].slice(unit.x+1);
+    }
+
+    // redrawPosition (animal){
+    //     _drowUnit(animal, ' ');
+    //     animal.move()
+    //     _drowUnit(animal, animal.icon);
+    // }
+    
+    view(){
+        document.body.innerText = '';
+        for (let i = 0; i < plan.length; i+=1){
+            let chunk = document.createElement('pre');
+            chunk.innerText = plan[i];
+            document.body.append(chunk);
+        }
+    }
+    
+    act(){
+        this.animals.forEach( animal => {
+            this._drowUnit(animal, ' ');         //удаляем с карты животное которое будет что-то делать
+            animal.randomAct();
+            this._drowUnit(animal, animal.icon); //возврвщаем на карту животное которое будет что-то делать
+        })
+    }
+
+}
+
+
+
 class Animal {
     constructor (){
         this.y = null;
@@ -104,25 +157,30 @@ class Animal {
         for (let i= -1; i <=1; i+=1){
             for (let j= -1; j <=1; j+=1){
                 if (!(i == 0 && j ==0)) {   //пропустить свою текущую позицию
-                   if ( plan[this.y+i][this.x+j] !== '#'){
+                   if ( plan[this.y+i][this.x+j] === ' '){
                     this.directions.push([i, j]) //добавить в массив свободных направлений
                    }
                 } 
             }
         }
     }
+    randomAct(){
+
+        this.look()
+        this.move()
+    }
 }
 
 
-function redrawPosition (animal){
-    drowUnit(animal, ' ');
-    animal.move()
-    drowUnit(animal, animal.icon);
-}
+// function redrawPosition (animal){
+//     drowUnit(animal, ' ');
+//     animal.move()
+//     drowUnit(animal, animal.icon);
+// }
 
-function drowUnit (unit, icon){
-    plan[unit.y] = plan[unit.y].slice(0, unit.x) + `${icon}` + plan[unit.y].slice(unit.x+1);
-}
+// function drowUnit (unit, icon){
+//     plan[unit.y] = plan[unit.y].slice(0, unit.x) + `${icon}` + plan[unit.y].slice(unit.x+1);
+// }
 
 function randomNumber(min, max) {
     let rand = min + Math.random() * (max + 1 - min);
@@ -130,26 +188,35 @@ function randomNumber(min, max) {
 }
 
 
+// function View(){
+//     document.body.innerText = '';
+//     for (let i = 0; i < plan.length; i+=1){
+//         let chunk = document.createElement('pre');
+//         chunk.innerText = plan[i];
+//         document.body.append(chunk);
+//     }
+// }
 
-function View(){
-    document.body.innerText = '';
-    for (let i = 0; i < plan.length; i+=1){
-        let chunk = document.createElement('pre');
-        chunk.innerText = plan[i];
-        document.body.append(chunk);
-    }
-}
 
+// let Vasya = new Animal;
+// Vasya.born();
+// drowUnit(Vasya, Vasya.icon)
+// View();
+// function update(){
+//     Vasya.look();
+//     redrawPosition (Vasya);
+//     View();
+// }
+const BraveNewWorld = new World;
+BraveNewWorld.createAnimals(Animal, 5);
+BraveNewWorld.renderAnimals();
+BraveNewWorld.view();
 
-let Vasya = new Animal;
-Vasya.born();
-drowUnit(Vasya, Vasya.icon)
-View();
 function update(){
-    Vasya.look();
-    redrawPosition (Vasya);
-    View();
+    BraveNewWorld.act();
+    BraveNewWorld.view();
 }
+
 
 // повторить с интервалом 1 секунды
 let timerId = setInterval(() => update(), iterationInterval);
