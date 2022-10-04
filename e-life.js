@@ -1,5 +1,5 @@
-const iterations = 1;
-const iterationInterval = 600;
+const iterations = 50;
+const iterationInterval = 100;
 const planWidth = 28;
 const planHeight = 12;
 
@@ -81,7 +81,8 @@ class Animal {
     constructor (){
         this.y = null;
         this.x = null;
-        this.icon = '☺'
+        this.icon = '☺';
+        this.directions = [];
     }
     born(){
         do {
@@ -91,20 +92,26 @@ class Animal {
         while( plan[this.y][this.x] !== ' ' )
     }
     move (){
-        this.x +=1;
+        let randomDirection = randomNumber(0, this.directions.length-1);
+
+        let vector = this.directions[randomDirection];
+
+        this.y += vector[0]
+        this.x += vector[1]
     }
     look (){
+        this.directions = [];
         for (let i= -1; i <=1; i+=1){
             for (let j= -1; j <=1; j+=1){
-                if (i !== 0 && j !==0) {
-                    console.log(plan[this.y+i][this.x+j])
+                if (!(i == 0 && j ==0)) {   //пропустить свою текущую позицию
+                   if ( plan[this.y+i][this.x+j] !== '#'){
+                    this.directions.push([i, j]) //добавить в массив свободных направлений
+                   }
                 } 
             }
         }
     }
 }
-
-
 
 
 function redrawPosition (animal){
@@ -116,17 +123,6 @@ function redrawPosition (animal){
 function drowUnit (unit, icon){
     plan[unit.y] = plan[unit.y].slice(0, unit.x) + `${icon}` + plan[unit.y].slice(unit.x+1);
 }
-
-// function born(){
-//     let posX;
-//     let posY;
-//     do {
-//         posX = randomNumber(1, planWidth-2);
-//         posY = randomNumber(1, planHeight-2);
-//     }
-//     while( plan[posY][posX] !== ' ' )
-//     // return [posX, posY];
-// }
 
 function randomNumber(min, max) {
     let rand = min + Math.random() * (max + 1 - min);
@@ -145,15 +141,13 @@ function View(){
 }
 
 
-
-
 let Vasya = new Animal;
 Vasya.born();
 drowUnit(Vasya, Vasya.icon)
 View();
 function update(){
-    // redrawPosition (Vasya);
     Vasya.look();
+    redrawPosition (Vasya);
     View();
 }
 
