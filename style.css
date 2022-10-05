@@ -6,15 +6,20 @@ body {
 .wrapper{
     display: flex;
     margin: 30px;
+    flex-direction: column;
 }
 
 .world{
-    width: 50%;
-    background-color:rgb(164 84 209);
+    order: 2;
+    width: 68%;
+    background-color: rgb(229 185 85);
     text-align: center;
+    border: solid 4px green;
+    padding: 20px;
 }
 .world-info {
-    width: 50%;
+    order: 1;
+    width: 70%;
     background-color: rgb(191 204 65);
     padding: 10px;
     text-align: center;
@@ -27,8 +32,42 @@ body {
     background-color: rgb(162 173 55);
 }
 
-
-
+.image{
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-image: url(1.png);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.image-white{
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-image: url(2.png);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.image-animal{
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-image: url(3.png);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.image-plant{
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-image: url(4.png);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
 
 /* ================button================ */
 

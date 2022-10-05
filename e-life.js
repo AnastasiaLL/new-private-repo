@@ -4,85 +4,38 @@ const planWidth = 28;
 const planHeight = 12;
 let BraveNewWorld;
 let gameTimer;
-
+let plan;
 const worldContainer = document.querySelector('.world');
 
 
 let template =
             ["############################",
-            `#      #    #             ##`,
+            `#      #    #*           *##`,
             "#                          #",
-            "#          #####           #",
+            "#    *     #####           #",
             "##         #   #    ##     #",
-            "###           ##     #     #",
+            "###     *     ##     #     #",
             "#           ###      #     #",
             "#   ####                   #",
-            "#   ##                     #",
+            "#   ##        * **         #",
             "#    #                 ### #",
-            "#    #                     #",
+            "#    #   **                #",
             "############################"];
       
-
-let plan;        
-// let plan = ["🌵🌵🌵🌵🌵🌵🌵🌵🌵🌵🌵🌵🌵🌵",
-//             `🌵🏵🏵🏵🌵⚰⚰⚰⚰⚰⚰🌵🌵🌵`,
-//             "🌵                         🌵",
-//             "🌵          🌵🌵🌵         🌵",
-//             "🌵🌵         🌵   🌵    🌵 🌵",
-//             "🌵🌵🌵         🌵          🌵",
-//             "🌵          🌵      🌵     🌵",
-//             "🌵   🌵🌵                  🌵",
-//             "🌵   🌵                    🌵",
-//             "🌵   🌵          🌵🌵🌵    🌵",
-//             "🌵                         🌵",
-//             "🌵🌵🌵🌵🌵🌵🌵🌵🌵🌵🌵🌵🌵🌵"];
-
-
-// function Vector(x, y) {
-//     this.x = x;
-//     this.y = y;
-// }
-// Vector.prototype.plus = function(other) {
-//     return new Vector(this.x + other.x, this.y + other.y);
-// };
-// let directions = {
-//     "n":  new Vector( 0, -1),
-//     "ne": new Vector( 1, -1),
-//     "e":  new Vector( 1,  0),
-//     "se": new Vector( 1,  1),
-//     "s":  new Vector( 0,  1),
-//     "sw": new Vector(-1,  1),
-//     "w":  new Vector(-1,  0),
-//     "nw": new Vector(-1, -1)
-// };
-
-
-// let grid = ["top left",    "top middle",    "top right",
-//             "bottom left", "bottom middle", "bottom right"];
-// // console.log(grid[2 + (1 * 3)]);
-// // → bottom right
-
-
-// class Grid {
-//     constructor(width, height) {
-//         this.space = new Array(width * height);
-//         this.width = width;
-//         this.height = height;
-//     }
-//     isInside(vector) {
-//         return vector.x >= 0 && vector.x < this.width &&
-//             vector.y >= 0 && vector.y < this.height;
-//     }
-//     get(vector) {
-//         return this.space[vector.x + this.width * vector.y];
-//     }
-//     set(vector, value) {
-//         this.space[vector.x + this.width * vector.y] = value;
-//     }
-// }
-
-// animals
-
+            // let template =
+            // ["############################",
+            // `#      #    #             ##`,
+            // "#                          #",
+            // "#          #####           #",
+            // "##         #   #    ##     #",
+            // "###           ##     #     #",
+            // "#           ###      #     #",
+            // "#   ####                   #",
+            // "#   ##                     #",
+            // "#    #                 ### #",
+            // "#    #                     #",
+            // "############################"];
+        
 class World {
     constructor (){
         this.animals = [];
@@ -105,18 +58,48 @@ class World {
     }
    
     view(){
+        // worldContainer.innerText = '';
+        // for (let i = 0; i < plan.length; i+=1){
+        //     let chunk = document.createElement('pre');
+        //     chunk.innerText = plan[i];
+        //     worldContainer.append(chunk);
+        // }
         worldContainer.innerText = '';
         for (let i = 0; i < plan.length; i+=1){
-            let chunk = document.createElement('pre');
-            chunk.innerText = plan[i];
-            worldContainer.append(chunk);
+            // chunk.innerText = plan[i];
+            
+            for ( let j=0; j < plan[i].length; j+=1){
+                if (plan[i][j] == '#'){
+                    let chunk = document.createElement('div');
+                    chunk.classList.add('image');
+                    worldContainer.append(chunk);
+                    console.log(plan[i][j])
+                }else if (plan[i][j] == ' ') {
+                    let chunk = document.createElement('div');
+                    chunk.classList.add('image-white');
+                    worldContainer.append(chunk);
+                }else if (plan[i][j] == '☺'){
+                    let chunk = document.createElement('div');
+                    chunk.classList.add('image-animal');
+                    worldContainer.append(chunk);
+                }else if (plan[i][j] == '*'){
+                    let chunk = document.createElement('div');
+                    chunk.classList.add('image-plant');
+                    worldContainer.append(chunk);
+                }
+                
+            }
+            let br = document.createElement('br');
+            worldContainer.append(br)
+            // chunk.classList.add('image');
+            // worldContainer.append(chunk);
         }
     }
     
-    act(){
+    turn(){
         this.animals.forEach( animal => {
             this._drowUnit(animal, ' ');         //удаляем с карты животное которое будет что-то делать
-            animal.randomAct();
+            animal.act();
             this._drowUnit(animal, animal.icon); //возврвщаем на карту животное которое с учетом совершенного действия
         })
     
@@ -150,6 +133,7 @@ class Animal {
         while( plan[this.y][this.x] !== ' ' )
     }
     randomMove (){
+        this._lookingFor(' ')
         let randomDirection = randomNumber(0, this.directions.length-1);
         let vector = this.directions[randomDirection];
         this.move(vector)
@@ -161,7 +145,7 @@ class Animal {
         this.health-=10;
         this.stamina-=10;
     }
-    lookingFor (aim){
+    _lookingFor (aim){
         this.directions = [];
         for (let i= -1; i <=1; i+=1){
             for (let j= -1; j <=1; j+=1){
@@ -173,17 +157,39 @@ class Animal {
             }
         }
     }
-    randomAct(){
-        this.lookingFor(' ')
-        this.randomMove()
+    act(){
+        if (this.health < 70){
+            this.eat();
+        }
+        if (this.stamina < 50) {
+            this.sleep();
+        } else {
+            this.randomMove();
+        }    
     }
     sleep(){
         this.health-=10;
         this.stamina+=10;
         if (this.stamina >100) this.stamina = 100;
+
     }
     isAlive(){
       return  (this.health > 0) 
+    }
+    eat(){
+        this._lookingFor ('*');
+        if (this.directions.length == 0){
+            this.randomMove ();
+        }else {
+          let randomDirection = randomNumber(0, this.directions.length-1);
+        let vector = this.directions[randomDirection];
+        this.move(vector)
+
+        this.health+=20;
+        this.stamina-=10;  
+        }
+        
+
     }
 }
 
@@ -205,7 +211,7 @@ function createGame(){
 }
 
 function update(){
-    BraveNewWorld.act();
+    BraveNewWorld.turn();
     BraveNewWorld.view();
     if (BraveNewWorld.animals.length == 0) clearInterval(gameTimer)
 }
