@@ -7,6 +7,13 @@ let gameTimer;
 let plan;
 const worldContainer = document.querySelector('.world');
 
+let iconsObject = {
+    '#': 'image-wall',
+    'Z': 'image-zebra',
+    ' ': 'image-white',
+    '*': 'image-plant',
+    'T': 'image-tiger',
+}
 
 let template =
             ["############################",
@@ -39,11 +46,19 @@ let template =
 class World {
     constructor (){
         this.animals = [];
+        this.log = [];
+    }
+
+    start(){
+        this.createAnimals(Zebra, 10);
+        this.createAnimals(Tiger, 5);
+        this.renderAnimals();
+        this.view();
     }
     
     createAnimals(animalClass, population){
         for (let i = 0; i < population; i+=1){
-            let newAnimal = new animalClass;
+            let newAnimal = new animalClass(this);
             this.animals.push(newAnimal);
         }
     }
@@ -58,41 +73,18 @@ class World {
     }
    
     view(){
-        // worldContainer.innerText = '';
-        // for (let i = 0; i < plan.length; i+=1){
-        //     let chunk = document.createElement('pre');
-        //     chunk.innerText = plan[i];
-        //     worldContainer.append(chunk);
-        // }
+
         worldContainer.innerText = '';
         for (let i = 0; i < plan.length; i+=1){
-            // chunk.innerText = plan[i];
             
             for ( let j=0; j < plan[i].length; j+=1){
-                if (plan[i][j] == '#'){
-                    let chunk = document.createElement('div');
-                    chunk.classList.add('image');
-                    worldContainer.append(chunk);
-                    console.log(plan[i][j])
-                }else if (plan[i][j] == ' ') {
-                    let chunk = document.createElement('div');
-                    chunk.classList.add('image-white');
-                    worldContainer.append(chunk);
-                }else if (plan[i][j] == '☺'){
-                    let chunk = document.createElement('div');
-                    chunk.classList.add('image-animal');
-                    worldContainer.append(chunk);
-                }else if (plan[i][j] == '*'){
-                    let chunk = document.createElement('div');
-                    chunk.classList.add('image-plant');
-                    worldContainer.append(chunk);
-                }
-                
+                let chunk = document.createElement('div');
+                chunk.classList.add(iconsObject[plan[i][j]]);
+                chunk.classList.add('image');
+                worldContainer.append(chunk);                
             }
             let br = document.createElement('br');
             worldContainer.append(br)
-            // chunk.classList.add('image');
-            // worldContainer.append(chunk);
         }
     }
     
@@ -100,23 +92,31 @@ class World {
         this.animals.forEach( animal => {
             this._drowUnit(animal, ' ');         //удаляем с карты животное которое будет что-то делать
             animal.act();
-            this._drowUnit(animal, animal.icon); //возврвщаем на карту животное которое с учетом совершенного действия
+            this._drowUnit(animal, animal.icon); //возврвщаем на карту животное  с учетом совершенного действия
         })
     
         for (let i=0; i < this.animals.length; i++){
-            if (!this.animals[i].isAlive()) {
+            if (!this.animals[i].isAlive()) {    
                 this._drowUnit(this.animals[i], ' ');
                 this.animals.splice(i,1)
             };
         }
+
+       const logInfo = document.querySelector('.description');
+       logInfo.textContent = '';
+       this.log.forEach( message => {
+        
+        let mes = document.createElement('p');
+        mes.textContent = message;
+        logInfo.append(mes);
+       })
+      
+
     }
 
 }
-
-
-
 class Animal {
-    constructor (){
+    constructor (world){
         this.y = null;
         this.x = null;
         this.icon = '☺';
@@ -124,6 +124,8 @@ class Animal {
         this.name = null;
         this.health = 100;
         this.stamina = 100;
+        this.food = null;
+        this.world = world;
     }
     born(){
         do {
@@ -142,7 +144,7 @@ class Animal {
         this.y += vector[0]
         this.x += vector[1]
 
-        this.health-=10;
+        this.health-=5;
         this.stamina-=10;
     }
     _lookingFor (aim){
@@ -168,8 +170,8 @@ class Animal {
         }    
     }
     sleep(){
-        this.health-=10;
-        this.stamina+=10;
+        this.health-=5;
+        this.stamina+=30;
         if (this.stamina >100) this.stamina = 100;
 
     }
@@ -177,23 +179,75 @@ class Animal {
       return  (this.health > 0) 
     }
     eat(){
-        this._lookingFor ('*');
+        this._lookingFor (this.food);
         if (this.directions.length == 0){
             this.randomMove ();
         }else {
-          let randomDirection = randomNumber(0, this.directions.length-1);
-        let vector = this.directions[randomDirection];
+        let vector = this.directions[0];
         this.move(vector)
 
-        this.health+=20;
-        this.stamina-=10;  
+        this.health+=30;
+        this.stamina-=5;  
+        if (this.health >100) this.health = 100;
         }
         
 
     }
 }
 
+class Zebra extends Animal {
+    constructor (world){
+        super(world)
+        this.name = 'Zebra';
+        this.food = '*';
+        this.icon = 'Z'
+    }
+    
+}
 
+class Tiger extends Animal {
+    constructor (world){
+        super(world)
+        this.name = 'Tiger';
+        this.food = 'Z';
+        this.icon = 'T'
+    }
+    eat(){
+        super.eat();
+        this.world.animals.forEach( animal =>{
+            if (animal.x === this.x && animal.y === this.y && animal.icon === 'Z'){
+                animal.health = -1000;
+                this.world.log.push(`${this.name} СОЖРАЛ ${animal.name}`);
+                console.log(`${this.name} СОЖРАЛ ${animal.name}`)
+            }
+        })
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 function randomNumber(min, max) {
     let rand = min + Math.random() * (max + 1 - min);
     return Math.floor(rand);
@@ -204,9 +258,7 @@ function createGame(){
     plan = 0;
     plan = template.slice();
     BraveNewWorld = new World;
-    BraveNewWorld.createAnimals(Animal, 5);
-    BraveNewWorld.renderAnimals();
-    BraveNewWorld.view();
+   BraveNewWorld.start();
 
 }
 
@@ -232,4 +284,8 @@ document.querySelector('.button-create').addEventListener('click', createGame);
 
 
 createGame()
+
+
+
+
 
