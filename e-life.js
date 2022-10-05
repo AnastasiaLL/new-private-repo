@@ -378,7 +378,7 @@ class Dobby extends Animal {
         } else {
             let vector = this.directions[0];
             this.move(vector);
-            this.world.log.push(`Добби нашел носок! Теперь Добби свободен!`);
+            this.world.log.push(`ДОББИ НАШЕЛ НОСОК! ТЕПЕРЬ ДОББИ СВОБОДЕН!`);
             this.health = -1000;
         };
     }
