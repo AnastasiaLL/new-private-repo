@@ -13,12 +13,14 @@ let iconsObject = {
     ' ': 'image-white',
     '*': 'image-plant',
     'T': 'image-tiger',
+    'D': 'image-dobby',
+    'S': 'image-sock',
 }
 
 let template =
             ["############################",
             `#      #    #*           *##`,
-            "#                          #",
+            "#                   S      #",
             "#    *     #####           #",
             "##         #   #    ##     #",
             "###     *     ##     #     #",
@@ -51,7 +53,8 @@ class World {
 
     start(){
         this.createAnimals(Zebra, 10);
-        this.createAnimals(Tiger, 5);
+        this.createAnimals(Tiger, 6);
+        this.createAnimals(Dobby, 1);
         this.renderAnimals();
         this.view();
     }
@@ -105,16 +108,39 @@ class World {
        const logInfo = document.querySelector('.description');
        logInfo.textContent = '';
        this.log.forEach( message => {
-        
-        let mes = document.createElement('p');
-        mes.textContent = message;
-        logInfo.append(mes);
+            let mes = document.createElement('p');
+            mes.textContent = message;
+            logInfo.append(mes);
        })
-      
-
+       this.plantsGrows()
     }
 
+    plantsGrows(){
+        if (randomNumber(0, 1)){    
+            let newPlant = new Plant;
+        do {
+            newPlant.x = randomNumber(1, planWidth-2);
+            newPlant.y = randomNumber(1, planHeight-2);
+        }
+        while( plan[newPlant.y][newPlant.x] !== ' ' );
+        this._drowUnit(newPlant, newPlant.icon);
+        }
+        
+    }
+   
+
 }
+
+class Plant{
+    constructor (){
+        this.y = null;
+        this.x = null;
+        this.icon = '*';
+    }
+
+
+}
+
 class Animal {
     constructor (world){
         this.y = null;
@@ -125,7 +151,9 @@ class Animal {
         this.health = 100;
         this.stamina = 100;
         this.food = null;
+        this.foodMessage = null;
         this.world = world;
+        this.class = Animal;
     }
     born(){
         do {
@@ -135,10 +163,15 @@ class Animal {
         while( plan[this.y][this.x] !== ' ' )
     }
     randomMove (){
-        this._lookingFor(' ')
-        let randomDirection = randomNumber(0, this.directions.length-1);
-        let vector = this.directions[randomDirection];
-        this.move(vector)
+        this._lookingFor(' ');
+        if (this.directions.length === 0 || this.stamina < 10) {
+            this.sleep();
+        }else {
+            let randomDirection = randomNumber(0, this.directions.length-1);
+            let vector = this.directions[randomDirection];
+            this.move(vector) 
+        }
+        
     }
     move (vector){
         this.y += vector[0]
@@ -160,10 +193,12 @@ class Animal {
         }
     }
     act(){
-        if (this.health < 70){
-            this.eat();
+        if (this.health > 50 && this.stamina > 50){
+            this.haveFun();
         }
-        if (this.stamina < 50) {
+        if (this.health < 50){
+            this.eat();
+        } else if (this.stamina < 20) {
             this.sleep();
         } else {
             this.randomMove();
@@ -183,15 +218,37 @@ class Animal {
         if (this.directions.length == 0){
             this.randomMove ();
         }else {
-        let vector = this.directions[0];
-        this.move(vector)
+            let vector = this.directions[0];
+            this.move(vector)
 
-        this.health+=30;
-        this.stamina-=5;  
-        if (this.health >100) this.health = 100;
+            this.health+=30;
+            if (this.health >100) this.health = 100;
+            this.world.log.push(this.foodMessage);
         }
-        
+    }
+    haveFun(){
+        this._lookingFor(this.icon);
+        if (this.directions.length == 0){
+            this.randomMove ();
+        }else {
+            this.directions = [];
+            this._lookingFor(' ');
+            if (this.directions.length == 0){ 
+                this.sleep();
+            }else{
+                this.world.createAnimals(this.class, 1);
+                let newAnimal = this.world.animals[this.world.animals.length - 1];
+                newAnimal.y = this.y + this.directions[0][0];
+                newAnimal.x = this.x + this.directions[0][1];
+                newAnimal.stamina = 50;
+                this.world.log.push(`еще один ${this.name} родился в этом прекрасном мире!`);
+                    
+                this.world._drowUnit(newAnimal, newAnimal.icon);
 
+                this.health -=50;
+                this.stamina -=50;
+            }    
+        }
     }
 }
 
@@ -200,9 +257,10 @@ class Zebra extends Animal {
         super(world)
         this.name = 'Zebra';
         this.food = '*';
-        this.icon = 'Z'
-    }
-    
+        this.icon = 'Z';
+        this.foodMessage = 'Зебра поела травки';
+        this.class = Zebra;
+    }   
 }
 
 class Tiger extends Animal {
@@ -210,22 +268,45 @@ class Tiger extends Animal {
         super(world)
         this.name = 'Tiger';
         this.food = 'Z';
-        this.icon = 'T'
+        this.icon = 'T';
+        this.foodMessage = 'Тигр СОЖРАЛ Зебру';
+        this.class = Tiger;
     }
     eat(){
         super.eat();
-        this.world.animals.forEach( animal =>{
+        this.world.animals.forEach( animal =>{ //убьем зебру
             if (animal.x === this.x && animal.y === this.y && animal.icon === 'Z'){
                 animal.health = -1000;
-                this.world.log.push(`${this.name} СОЖРАЛ ${animal.name}`);
-                console.log(`${this.name} СОЖРАЛ ${animal.name}`)
             }
         })
 
     }
 }
 
+class Dobby extends Animal {
+    constructor (world){
+        super(world)
+        this.name = 'Dobby';
+        this.icon = 'D'
+    }
+    act(){
+        this._lookingFor('S');
+        
+        if (this.directions.length == 0){
+            this.randomMove ();
+        }else {
+        let vector = this.directions[0];
+        this.move(vector);
+        this.world.log.push(`Добби нашел носок! Теперь Добби свободен!`);
+        this.health = -1000;
+        };
+    }
+    move (vector){
+        this.y += vector[0]
+        this.x += vector[1]
+    }
 
+}
 
 
 
