@@ -17,16 +17,25 @@ body {
     text-align: center;
     border: solid 4px green;
     padding: 20px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 .world-info {
     order: 1;
     width: 934px;
     background-color: rgb(191 204 65);
     padding: 10px;
-    text-align: center;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 .info__hello{
-    font-size: 25px;
+    text-align: center;
+}
+.info__about{
+    word-break: normal
+}
+.information {
+    padding-left: 20px;
 }
 
 .description{
@@ -37,6 +46,7 @@ body {
     border-radius: 10px;
     background-color: rgb(162 173 55);
     overflow-x: hidden;
+    text-align: center;
 } 
 
 .image{
@@ -94,6 +104,7 @@ body {
 
 .button {
     margin: 10px;
+    margin-left: 83px;
 
     outline: none;
     border-radius: 50rem;

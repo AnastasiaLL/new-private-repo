@@ -48,7 +48,7 @@ class World {
 
     start() {
         this.createAnimals(Zebra, 15);
-        this.createAnimals(Tiger, 5);
+        this.createAnimals(Tiger, 7);
         this.createAnimals(Dobby, 1);
         this.createAnimals(Bird, 1);
         this.createStuff(Sock, 1);
@@ -247,7 +247,7 @@ class Animal {
                 newAnimal.y = this.y + this.directions[0][0];
                 newAnimal.x = this.x + this.directions[0][1];
                 newAnimal.stamina = 50;
-                this.world.log.push(`еще один ${this.name} родился в этом прекрасном мире!`);
+                this.world.log.push(`еще один ${this.name} родился в Зоопарке!`);
 
                 this.world._drowUnit(newAnimal, newAnimal.icon);
 
@@ -289,7 +289,7 @@ class Zebra extends Animal {
                 if (newAnimal.name === 'Единорог') {
                     this.world.log.push(`ВАУ, РОДИЛСЯ ЕДИНОРОГ!`);
                 } else {
-                    this.world.log.push(`еще один ${newAnimal.name} родился в этом прекрасном мире!`);
+                    this.world.log.push(`прекрасная ${newAnimal.name} родилась в этом мире!`);
                 }
 
                 this.world._drowUnit(newAnimal, newAnimal.icon);
