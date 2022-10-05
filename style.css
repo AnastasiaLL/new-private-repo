@@ -7,11 +7,12 @@ body {
     display: flex;
     margin: 30px;
     flex-direction: column;
+    align-items: center;
 }
 
 .world{
     order: 2;
-    width: 68%;
+    width: 906px;
     background-color: rgb(229 185 85);
     text-align: center;
     border: solid 4px green;
@@ -19,7 +20,7 @@ body {
 }
 .world-info {
     order: 1;
-    width: 70%;
+    width: 934px;
     background-color: rgb(191 204 65);
     padding: 10px;
     text-align: center;
@@ -84,6 +85,9 @@ body {
     background-image: url(9.png);
     
     background-color: #6e9eff;
+}
+.image-unicorn{
+    background-image: url(10.png);
 }
 
 /* ================button================ */
