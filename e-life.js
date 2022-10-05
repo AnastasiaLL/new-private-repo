@@ -1,7 +1,7 @@
 const iterations = 50;
 const iterationInterval = 100;
 const planWidth = 28;
-const planHeight = 12;
+const planHeight = 18;
 let BraveNewWorld;
 let gameTimer;
 let plan;
@@ -15,35 +15,43 @@ let iconsObject = {
     'T': 'image-tiger',
     'D': 'image-dobby',
     'S': 'image-sock',
+    '~': 'image-water',
+    'B': 'image-bird',
 }
 
+// let template =
+//             ["############################",
+//             `#      #    #*           *##`,
+//             "#                          #",
+//             "#    *     #####           #",
+//             "##         #   #    ##     #",
+//             "###     *     ##     #     #",
+//             "#           ###      #     #",
+//             "#   ####                   #",
+//             "#   ##        * **         #",
+//             "#    #                 ### #",
+//             "#    #   **                #",
+//             "############################"];
+      
 let template =
             ["############################",
-            `#      #    #*           *##`,
-            "#                   S      #",
-            "#    *     #####           #",
-            "##         #   #    ##     #",
-            "###     *     ##     #     #",
+            `#~~~~~~#    #             ##`,
+            "#~~~~~                     #",
+            "#~~~~      #####           #",
+            "##~~       #   #    ##     #",
+            "###           ##     #     #",
             "#           ###      #     #",
             "#   ####                   #",
-            "#   ##        * **         #",
+            "#   ##                     #",
             "#    #                 ### #",
-            "#    #   **                #",
+            "#                          #",
+            "#            #             #",
+            "#    #                     #",
+            "#    #                 ### #",
+            "#                          #",
+            "#          #####           #",
+            "#    #                     #",
             "############################"];
-      
-            // let template =
-            // ["############################",
-            // `#      #    #             ##`,
-            // "#                          #",
-            // "#          #####           #",
-            // "##         #   #    ##     #",
-            // "###           ##     #     #",
-            // "#           ###      #     #",
-            // "#   ####                   #",
-            // "#   ##                     #",
-            // "#    #                 ### #",
-            // "#    #                     #",
-            // "############################"];
         
 class World {
     constructor (){
@@ -53,8 +61,11 @@ class World {
 
     start(){
         this.createAnimals(Zebra, 10);
-        this.createAnimals(Tiger, 6);
+        this.createAnimals(Tiger, 3);
         this.createAnimals(Dobby, 1);
+        this.createAnimals(Bird, 1);
+        this.createStuff(Sock, 1);
+        this.createStuff(Plant,randomNumber(15, 25))
         this.renderAnimals();
         this.view();
     }
@@ -93,7 +104,7 @@ class World {
     
     turn(){
         this.animals.forEach( animal => {
-            this._drowUnit(animal, ' ');         //удаляем с карты животное которое будет что-то делать
+            this._drowUnit(animal, animal.step);         //удаляем с карты животное которое будет что-то делать
             animal.act();
             this._drowUnit(animal, animal.icon); //возврвщаем на карту животное  с учетом совершенного действия
         })
@@ -112,20 +123,22 @@ class World {
             mes.textContent = message;
             logInfo.append(mes);
        })
-       this.plantsGrows()
+        
+        this.createStuff(Plant,randomNumber(0, 1))
+
     }
 
-    plantsGrows(){
-        if (randomNumber(0, 1)){    
-            let newPlant = new Plant;
-        do {
-            newPlant.x = randomNumber(1, planWidth-2);
-            newPlant.y = randomNumber(1, planHeight-2);
+    createStuff(stuff,stuffCount){ 
+        for (let i=0; i<stuffCount;i+=1 ){
+            let newStuff = new stuff;
+            do {
+                newStuff.x = randomNumber(1, planWidth-2);
+                newStuff.y = randomNumber(1, planHeight-2);
+            }
+            while( plan[newStuff.y][newStuff.x] !== ' ' );
+            this._drowUnit(newStuff, newStuff.icon);
         }
-        while( plan[newPlant.y][newPlant.x] !== ' ' );
-        this._drowUnit(newPlant, newPlant.icon);
-        }
-        
+                
     }
    
 
@@ -137,8 +150,13 @@ class Plant{
         this.x = null;
         this.icon = '*';
     }
+}
 
-
+class Sock extends Plant{
+    constructor (){
+        super();
+        this.icon = 'S'
+    }    
 }
 
 class Animal {
@@ -148,12 +166,13 @@ class Animal {
         this.icon = '☺';
         this.directions = [];
         this.name = null;
-        this.health = 100;
-        this.stamina = 100;
+        this.health = 150;
+        this.stamina = 150;
         this.food = null;
         this.foodMessage = null;
         this.world = world;
         this.class = Animal;
+        this.step=' '
     }
     born(){
         do {
@@ -178,7 +197,7 @@ class Animal {
         this.x += vector[1]
 
         this.health-=5;
-        this.stamina-=10;
+        this.stamina-=5;
     }
     _lookingFor (aim){
         this.directions = [];
@@ -206,8 +225,8 @@ class Animal {
     }
     sleep(){
         this.health-=5;
-        this.stamina+=30;
-        if (this.stamina >100) this.stamina = 100;
+        this.stamina+=40;
+        if (this.stamina >150) this.stamina = 150;
 
     }
     isAlive(){
@@ -221,19 +240,19 @@ class Animal {
             let vector = this.directions[0];
             this.move(vector)
 
-            this.health+=30;
-            if (this.health >100) this.health = 100;
+            this.health+=40;
+            if (this.health >150) this.health = 150;
             this.world.log.push(this.foodMessage);
         }
     }
     haveFun(){
         this._lookingFor(this.icon);
-        if (this.directions.length == 0){
+        if (this.directions.length == 0 || (randomNumber(0, 2)<2)){
             this.randomMove ();
         }else {
             this.directions = [];
             this._lookingFor(' ');
-            if (this.directions.length == 0){ 
+            if (this.directions.length == 0 ){ 
                 this.sleep();
             }else{
                 this.world.createAnimals(this.class, 1);
@@ -261,6 +280,40 @@ class Zebra extends Animal {
         this.foodMessage = 'Зебра поела травки';
         this.class = Zebra;
     }   
+}
+
+class Bird extends Animal {
+    constructor (world){
+        super(world)
+        this.name = 'Bird';
+        this.food = '*';
+        this.icon = 'B';
+        this.foodMessage = 'Фламинго снова наелся рыбы из озера';
+        this.class = Bird;
+        this.step='~';
+        this.health = 10000;
+        this.stamina = 10000;
+    }   
+    born(){
+        this.x = randomNumber(1, 4);
+        this.y = randomNumber(1, 3);
+    }
+    randomMove (){
+        this._lookingFor('~');
+        if (this.directions.length === 0 || this.stamina < 10) {
+            this.sleep();
+        }else {
+            let randomDirection = randomNumber(0, this.directions.length-1);
+            let vector = this.directions[randomDirection];
+            this.move(vector) 
+        }
+    }
+    act(){
+        this.randomMove();
+        if ((randomNumber(0, 2)<2)){
+            this.world.log.push(this.foodMessage);
+        }
+    }
 }
 
 class Tiger extends Animal {

@@ -77,7 +77,14 @@ body {
 .image-sock{
     background-image: url(7.png);
 }
-
+.image-water{
+    background-image: url(8.png);
+}
+.image-bird{
+    background-image: url(9.png);
+    
+    background-color: #6e9eff;
+}
 
 /* ================button================ */
 
