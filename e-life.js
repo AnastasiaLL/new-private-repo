@@ -18,6 +18,8 @@ let iconsObject = {
     '~': 'image-water',
     'B': 'image-bird',
     'U': 'image-unicorn',
+    'd': 'image-dwarf',
+    'f': 'image-DwarfFortress',
 }
 
 let template =
@@ -44,6 +46,7 @@ class World {
     constructor() {
         this.animals = [];
         this.log = [];
+        this.specialEventAvaible = true
     }
 
     start() {
@@ -52,7 +55,7 @@ class World {
         this.createAnimals(Dobby, 1);
         this.createAnimals(Bird, 1);
         this.createStuff(Sock, 1);
-        this.createStuff(Plant, randomNumber(15, 25))
+        this.createStuff(Plant, randomNumber(35, 40))
         this.renderAnimals();
         this.view();
     }
@@ -114,23 +117,35 @@ class World {
         })
 
         this.createStuffRandomly(Plant, randomNumber(1, 2))
-      
 
+        if (this.specialEventAvaible && !randomNumber(0, 60)) {  //specialEvent chance 1/20
+            this.specialEvent()
+        }
+
+
+    }
+
+    specialEvent(){
+        this.createAnimals(Dwarf, 1);
+        let specialGuest=this.animals[this.animals.length-1]
+        specialGuest.born()
+        this._drowUnit(specialGuest, specialGuest.icon);
+        this.specialEventAvaible = false;
     }
 
     createStuffRandomly(stuff, stuffCount) {
         for (let i = 0; i < stuffCount; i += 1) {
-            let posY=randomNumber(1, planHeight - 2);
-            let posX=randomNumber(1, planWidth - 2);
-            if (plan[posY][posX] == ' '){
+            let posY = randomNumber(1, planHeight - 2);
+            let posX = randomNumber(1, planWidth - 2);
+            if (plan[posY][posX] == ' ') {
                 let newStuff = new stuff;
                 newStuff.x = posX;
                 newStuff.y = posY;
                 this._drowUnit(newStuff, newStuff.icon);
-            }            
-        } 
+            }
+        }
     }
-    
+
     createStuff(stuff, stuffCount) {
         for (let i = 0; i < stuffCount; i += 1) {
             let newStuff = new stuff;
@@ -399,7 +414,7 @@ class Dobby extends Animal {
         } else {
             let vector = this.directions[0];
             this.move(vector);
-            this.trail=' '
+            this.trail = ' '
             this.world.log.push(`ДОББИ НАШЕЛ НОСОК! ТЕПЕРЬ ДОББИ СВОБОДЕН!`);
             this.health = -1000;
         };
@@ -414,7 +429,31 @@ class Dobby extends Animal {
 }
 
 
-
+class Dwarf extends Dobby {
+    constructor(world) {
+        super(world)
+        this.name = 'Дворф';
+        this.icon = 'd'
+    }
+    born() {
+        do {
+            this.x = 1 + (planWidth - 3) * randomNumber(0, 1);
+            this.y = randomNumber(1, planHeight - 2);
+        }
+        while ((plan[this.y][this.x] !== ' ') && (plan[this.y][this.x] !== '*'))
+        this.world.log.push(`КТО-ТО ВОРВАЛСЯ В НАШ ЗООПАРК! КАЖЕТСЯ ЭТО ДВОРФ!`);
+    }
+    act() {
+        this.directions = []
+        if (randomNumber(0, 30)) {
+            this.randomMove();
+        } else {
+            this.trail = 'f'
+            this.world.log.push(`ДВОРФЫ РЕШИЛИ ОСНОВАТЬ ТУТ СВОЮ КРЕПОСТЬ!`);
+            this.health = -1000;
+        };
+    }
+}
 
 
 
@@ -456,10 +495,10 @@ function update() {
 
 
 function startGame() {
-    
+    // повторить с интервалом 1 секунды
     gameTimer = setInterval(() => update(), iterationInterval);
 
-    
+    // остановить вывод через 3 секунд
     setTimeout(() => { clearInterval(gameTimer) }, iterations * iterationInterval);
 }
 
