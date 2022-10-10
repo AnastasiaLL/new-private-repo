@@ -91,14 +91,16 @@ class World {
 
     turn() {
         this.animals.forEach(animal => {
-            this._drowUnit(animal, animal.step);         //удаляем с карты животное которое будет что-то делать
-            animal.act();
-            this._drowUnit(animal, animal.icon); //возврвщаем на карту животное  с учетом совершенного действия
+            if (animal.isAlive()) {                 //see if it’s alive
+                this._drowUnit(animal, animal.trail);         //Remove from the plan an animal that will do something
+                animal.act();
+                this._drowUnit(animal, animal.icon); //Back to plan an animal that did something
+            }
         })
 
         for (let i = 0; i < this.animals.length; i++) {
             if (!this.animals[i].isAlive()) {
-                this._drowUnit(this.animals[i], ' ');
+                this._drowUnit(this.animals[i], this.animals[i].trail);
                 this.animals.splice(i, 1)
             };
         }
@@ -111,10 +113,24 @@ class World {
             logInfo.append(mes);
         })
 
-        this.createStuff(Plant, randomNumber(0, 2))
+        this.createStuffRandomly(Plant, randomNumber(1, 2))
+      
 
     }
 
+    createStuffRandomly(stuff, stuffCount) {
+        for (let i = 0; i < stuffCount; i += 1) {
+            let posY=randomNumber(1, planHeight - 2);
+            let posX=randomNumber(1, planWidth - 2);
+            if (plan[posY][posX] == ' '){
+                let newStuff = new stuff;
+                newStuff.x = posX;
+                newStuff.y = posY;
+                this._drowUnit(newStuff, newStuff.icon);
+            }            
+        } 
+    }
+    
     createStuff(stuff, stuffCount) {
         for (let i = 0; i < stuffCount; i += 1) {
             let newStuff = new stuff;
@@ -125,7 +141,6 @@ class World {
             while (plan[newStuff.y][newStuff.x] !== ' ');
             this._drowUnit(newStuff, newStuff.icon);
         }
-
     }
 
 
@@ -159,7 +174,7 @@ class Animal {
         this.foodMessage = null;
         this.world = world;
         this.class = Animal;
-        this.step = ' '
+        this.trail = ' '
     }
     born() {
         do {
@@ -169,7 +184,9 @@ class Animal {
         while (plan[this.y][this.x] !== ' ')
     }
     randomMove() {
+        this.directions = []
         this._lookingFor(' ');
+        this._lookingFor('*');
         if (this.directions.length === 0 || this.stamina < 10) {
             this.sleep();
         } else {
@@ -180,29 +197,31 @@ class Animal {
 
     }
     move(vector) {
+        let newTrail = plan[this.y + vector[0]][this.x + vector[1]]
         this.y += vector[0]
         this.x += vector[1]
+        this.trail = newTrail
 
         this.health -= 5;
         this.stamina -= 5;
     }
     _lookingFor(aim) {
-        this.directions = [];
+        // this.directions = [];
         for (let i = -1; i <= 1; i += 1) {
             for (let j = -1; j <= 1; j += 1) {
-                if (!(i == 0 && j == 0)) {   //пропустить свою текущую позицию
+                if (!(i == 0 && j == 0)) {   //skip current position
                     if (plan[this.y + i][this.x + j] === aim) {
-                        this.directions.push([i, j]) //добавить в массив свободных направлений
+                        this.directions.push([i, j]) // add to an array of free directions
                     }
                 }
             }
         }
     }
     act() {
+        this.directions = []
         if (this.health > 50 && this.stamina > 50) {
             this.haveFun();
-        }
-        if (this.health < 50) {
+        } else if (this.health < 50) {     
             this.eat();
         } else if (this.stamina < 20) {
             this.sleep();
@@ -226,7 +245,7 @@ class Animal {
         } else {
             let vector = this.directions[0];
             this.move(vector)
-
+            this.trail = ' '  //grass does not grow if it has been eaten or a zebra has been killed here
             this.health += 40;
             if (this.health > 150) this.health = 150;
             this.world.log.push(this.foodMessage);
@@ -237,7 +256,7 @@ class Animal {
         if (this.directions.length == 0 || (randomNumber(0, 2) < 2)) {
             this.randomMove();
         } else {
-            this.directions = [];
+            this.directions = [];  
             this._lookingFor(' ');
             if (this.directions.length == 0) {
                 this.sleep();
@@ -272,14 +291,14 @@ class Zebra extends Animal {
         if (this.directions.length == 0 || (randomNumber(0, 2) < 2)) {
             this.randomMove();
         } else {
-            this.directions = [];
+            this.directions = [];       
             this._lookingFor(' ');
             if (this.directions.length == 0) {
                 this.sleep();
             } else {
                 let zebraChild = this.class;
                 if (randomNumber(0, 20) > 19) {
-                    zebraChild = Unicorn;   //вероятность рождения единорога 1/20
+                    zebraChild = Unicorn;   //chance of having unicorn 1/20
                 }
                 this.world.createAnimals(zebraChild, 1);
                 let newAnimal = this.world.animals[this.world.animals.length - 1];
@@ -318,7 +337,7 @@ class Bird extends Animal {
         this.icon = 'B';
         this.foodMessage = 'Фламинго снова наелся рыбы из озера';
         this.class = Bird;
-        this.step = '~';
+        this.trail = '~';
         this.health = 10000;
         this.stamina = 10000;
     }
@@ -327,6 +346,7 @@ class Bird extends Animal {
         this.y = randomNumber(1, 3);
     }
     randomMove() {
+        this.directions = []
         this._lookingFor('~');
         if (this.directions.length === 0 || this.stamina < 10) {
             this.sleep();
@@ -355,7 +375,7 @@ class Tiger extends Animal {
     }
     eat() {
         super.eat();
-        this.world.animals.forEach(animal => { //убьем зебру
+        this.world.animals.forEach(animal => { //kill zebra!
             if (animal.x === this.x && animal.y === this.y && animal.icon === 'Z') {
                 animal.health = -1000;
             }
@@ -371,6 +391,7 @@ class Dobby extends Animal {
         this.icon = 'D'
     }
     act() {
+        this.directions = []
         this._lookingFor('S');
 
         if (this.directions.length == 0) {
@@ -378,13 +399,16 @@ class Dobby extends Animal {
         } else {
             let vector = this.directions[0];
             this.move(vector);
+            this.trail=' '
             this.world.log.push(`ДОББИ НАШЕЛ НОСОК! ТЕПЕРЬ ДОББИ СВОБОДЕН!`);
             this.health = -1000;
         };
     }
     move(vector) {
+        let newTrail = plan[this.y + vector[0]][this.x + vector[1]]
         this.y += vector[0]
         this.x += vector[1]
+        this.trail = newTrail
     }
 
 }
@@ -432,10 +456,10 @@ function update() {
 
 
 function startGame() {
-    // повторить с интервалом 1 секунды
+    
     gameTimer = setInterval(() => update(), iterationInterval);
 
-    // остановить вывод через 3 секунд
+    
     setTimeout(() => { clearInterval(gameTimer) }, iterations * iterationInterval);
 }
 
