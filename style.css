@@ -1,0 +1,141 @@
+body {
+    font-size: x-large;
+     line-height: 1px; 
+ }
+ 
+ .wrapper{
+     display: flex;
+     margin: 30px;
+     flex-direction: column;
+     align-items: center;
+ }
+ 
+ .world{
+     order: 2;
+     width: 906px;
+     background-color: rgb(229 185 85);
+     text-align: center;
+     border: solid 4px green;
+     padding: 20px;
+     border-bottom-left-radius: 10px;
+     border-bottom-right-radius: 10px;
+ }
+ .world-info {
+     order: 1;
+     width: 934px;
+     background-color: rgb(191 204 65);
+     padding: 10px;
+     border-top-left-radius: 10px;
+     border-top-right-radius: 10px;
+ }
+ .info__hello{
+     text-align: center;
+ }
+ .info__about{
+     word-break: normal
+ }
+ .information {
+     padding-left: 20px;
+ }
+ 
+ .description{
+     padding-top: 10px;
+     padding-bottom: 10px;
+     width: 100%;
+     height: 100px;
+     border-radius: 10px;
+     background-color: rgb(162 173 55);
+     overflow-x: hidden;
+     text-align: center;
+ } 
+ 
+ .image{
+     display: inline-block;
+     width: 30px;
+     height: 30px;
+     background-position: center;
+     background-size: cover;
+     background-repeat: no-repeat;
+ }
+ .image-wall{
+    
+     background-image: url(1.png);
+    
+ }
+ .image-white{
+    
+     background-image: url(2.png);
+    
+ }
+ .image-zebra{
+   
+     background-image: url(3.png);
+    
+ }
+ .image-plant{
+     
+     background-image: url(4.png);
+    
+ }
+ .image-tiger{
+    
+     background-image: url(5.png);
+   
+ }
+ .image-dobby{
+     background-image: url(6.png);
+ }
+ .image-sock{
+     background-image: url(7.png);
+ }
+ .image-water{
+     background-image: url(8.png);
+ }
+ .image-bird{
+     background-image: url(9.png);
+     
+     background-color: #6e9eff;
+ }
+ .image-unicorn{
+     background-image: url(10.png);
+ }
+ .image-dwarf{
+     background-image: url(11.png);
+ }
+ .image-DwarfFortress{
+     background-image: url(12.png);
+ }
+ 
+ /* ================button================ */
+ 
+ .button {
+     margin: 10px;
+     margin-left: 83px;
+ 
+     outline: none;
+     border-radius: 50rem;
+     transition-property: background-color, color;
+     transition-duration: .3s;
+     border: 1px solid transparent;
+     text-align: center;
+     padding: 10px 20px 10px;
+     font-size: 1.2rem;
+     letter-spacing: 0.1rem;
+     max-height: 4.2rem;
+     min-width: 9rem;
+     text-transform: uppercase;
+ }
+  
+ .primary-button {
+     color: #FFFFFF;
+     background-color: #3a7e52;
+ }
+ 
+ .primary-button:hover {
+     color: #FFFFFF;
+     background-color: #0e4421;
+     box-shadow: inset 0 0 0 1px #0e4421;
+     cursor: pointer;
+ }
+   
+ 
