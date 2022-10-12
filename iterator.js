@@ -32,12 +32,8 @@ class CustomIterator {
 
     
     getCurrent(){
-
         this.generator.next()
-
-       return this._getSlice(this.position, this.position + this.windowWidth + 1)
-        
-             
+        return this._getSlice(this.position, this.position + this.windowWidth + 1)             
     }
 
     _getSlice(start, end){
@@ -51,8 +47,11 @@ class CustomIterator {
     }
         
     forward(){
-        
         return this._getSlice (this.position +1, this.position +2 + this.windowWidth);
+    }
+
+    back(){
+        return this._getSlice (this.position -1, this.position  + this.windowWidth);
     }
 
 
@@ -65,8 +64,8 @@ const customIterator = new CustomIterator(iterateData, iterateConfig)
 
 
 console.log (customIterator.getCurrent())  // [0,1,2]
-console.log (customIterator.getCurrent())  // [0,1,2]
-// console.log (customIterator.getCurrent())  // [0,1,2]
-console.log (customIterator.getCurrent()) 
-console.log (customIterator.forward()) // [0,1,2]
+console.log (customIterator.forward()) // [1,2,3]
+// customIterator.jumpTo(3) // undefined
+console.log (customIterator.getCurrent()) // [3,4,5]
+console.log (customIterator.back()) // [2,3,4]
 
