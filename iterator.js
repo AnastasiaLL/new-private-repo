@@ -24,8 +24,13 @@ class CustomIterator {
 
     generatePosition = function* (){
         while(true){
-           yield this.position
-           this.position += this.windowWidth + 1;
+            if (this.position > this.iterateData.length-1){
+                if (this.isCyclic){
+                    this.position = 0;
+                } else return
+            } 
+            yield 
+            this.position += this.windowWidth + 1;
        }
     }    
 
@@ -37,7 +42,7 @@ class CustomIterator {
 
     _getSlice(start, end){
         if (end > this.iterateData.length) {
-            console.log('No more data.');
+            console.log('No data.');
             return undefined;
         } else {
             let currentArr = this.iterateData.slice(start, end);
@@ -73,4 +78,9 @@ console.log (customIterator.forward()) // [1,2,3]
 console.log ( customIterator.jumpTo(3)) // undefined
 console.log (customIterator.getCurrent()) // [3,4,5]
 console.log (customIterator.back()) // [2,3,4]
+console.log (customIterator.getCurrent()) 
+console.log (customIterator.getCurrent()) 
+console.log (customIterator.getCurrent()) 
+console.log (customIterator.getCurrent()) 
+console.log (customIterator.getCurrent()) 
 
