@@ -19,7 +19,7 @@ class CustomIterator {
         this.position = 0;
         this.isCyclic = iterateConfig.cyclic;
         this.windowWidth = iterateConfig.windowWidth;
-        this.generator = this.generatePosition(this);
+        this.generator = this.generatePosition();
     }
 
     generatePosition = function* (){
@@ -31,30 +31,34 @@ class CustomIterator {
     }    
 
     
-      getCurrent(){
+    getCurrent(){
 
-         this.generator.next()
+        this.generator.next()
 
-        if (this.position + this.windowWidth + 1 > this.iterateData.length) {
-            console.log('No more data.');
-            return undefined
-        } else {
-            let currentArr = this.iterateData.slice(this.position, this.position + this.windowWidth + 1);
-            return currentArr;
-        }    
-       
+       return this._getSlice(this.position, this.position + this.windowWidth + 1)
+        
              
     }
+
+    _getSlice(start, end){
+        if (end > this.iterateData.length) {
+            console.log('No more data.');
+            return undefined;
+        } else {
+            let currentArr = this.iterateData.slice(start, end);
+            return currentArr;
+        } 
+    }
         
-    // forward(){
-    //     this.position -= this.windowWidth ;
-    //     return resultArr;
-    // }
+    forward(){
+        
+        return this._getSlice (this.position +1, this.position +2 + this.windowWidth);
+    }
 
 
 }
 
-const iterateData = [0,1,2,3,4,5,6,7,8,9,10,11]
+const iterateData = [0,1,2, 3,4,5, 6,7,8, 9,10,11]
 const iterateConfig = {'cyclic': true, 'windowWidth': 2}
 
 const customIterator = new CustomIterator(iterateData, iterateConfig)
@@ -62,6 +66,7 @@ const customIterator = new CustomIterator(iterateData, iterateConfig)
 
 console.log (customIterator.getCurrent())  // [0,1,2]
 console.log (customIterator.getCurrent())  // [0,1,2]
-console.log (customIterator.getCurrent())  // [0,1,2]
-console.log (customIterator.getCurrent())  // [0,1,2]
-console.log (customIterator.getCurrent())  // [0,1,2]
+// console.log (customIterator.getCurrent())  // [0,1,2]
+console.log (customIterator.getCurrent()) 
+console.log (customIterator.forward()) // [0,1,2]
+
