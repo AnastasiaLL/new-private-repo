@@ -24,7 +24,6 @@ class CustomIterator {
 
     generatePosition = function* (){
         while(true){
-           console.log(this.position)
            yield this.position
            this.position += this.windowWidth + 1;
        }
@@ -54,6 +53,12 @@ class CustomIterator {
         return this._getSlice (this.position -1, this.position  + this.windowWidth);
     }
 
+    jumpTo(number){
+        let startPosition = this.position + (this.windowWidth + 1)* (number +1);
+        let endPosition = startPosition + this.windowWidth + 1;
+        return this._getSlice (startPosition, endPosition);
+    }
+
 
 }
 
@@ -65,7 +70,7 @@ const customIterator = new CustomIterator(iterateData, iterateConfig)
 
 console.log (customIterator.getCurrent())  // [0,1,2]
 console.log (customIterator.forward()) // [1,2,3]
-// customIterator.jumpTo(3) // undefined
+console.log ( customIterator.jumpTo(3)) // undefined
 console.log (customIterator.getCurrent()) // [3,4,5]
 console.log (customIterator.back()) // [2,3,4]
 
