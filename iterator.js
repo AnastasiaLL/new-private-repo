@@ -37,10 +37,10 @@ class CustomIterator {
     
     getCurrent(){
         this.generator.next()
-        return this._getSlice(this.position, this.position + this.windowWidth + 1)             
+        return this.getSlice(this.position, this.position + this.windowWidth + 1)             
     }
 
-    _getSlice(start, end){
+    getSlice(start, end){
         if (end > this.iterateData.length) {
             console.log('No data.');
             return undefined;
@@ -51,17 +51,17 @@ class CustomIterator {
     }
         
     forward(){
-        return this._getSlice (this.position +1, this.position +2 + this.windowWidth);
+        return this.getSlice (this.position +1, this.position +2 + this.windowWidth);
     }
 
     back(){
-        return this._getSlice (this.position -1, this.position  + this.windowWidth);
+        return this.getSlice (this.position -1, this.position  + this.windowWidth);
     }
 
     jumpTo(number){
         let startPosition = this.position + (this.windowWidth + 1)* (number +1);
         let endPosition = startPosition + this.windowWidth + 1;
-        return this._getSlice (startPosition, endPosition);
+        return this.getSlice (startPosition, endPosition);
     }
 
 
